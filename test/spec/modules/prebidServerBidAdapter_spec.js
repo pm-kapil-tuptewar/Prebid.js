@@ -993,6 +993,28 @@ describe('S2S Adapter', function () {
       });
     });
 
+    it('device.language should be in ISO-639-1-alpha-2 format (2 character language)', function () {
+      const s2sConfig = Object.assign({}, CONFIG, {
+		  endpoint: {
+          p1Consent: 'https://prebid.adnxs.com/pbs/v1/openrtb2/auction'
+		  }
+      });
+
+      const _config = {
+		  s2sConfig: s2sConfig,
+		  device: { language: 'en-US' }
+      };
+
+      config.setConfig(_config);
+      adapter.callBids(REQUEST, BID_REQUESTS, addBidResponse, done, ajax);
+      const requestBid = JSON.parse(server.requests[0].requestBody);
+      expect(requestBid.device).to.deep.equal({
+		  language: 'en',
+		  w: window.innerWidth,
+		  h: window.innerHeight
+      });
+    });
+
     describe('price floors module', function () {
       function runTest(expectedFloor, expectedCur) {
         adapter.callBids(REQUEST, BID_REQUESTS, addBidResponse, done, ajax);

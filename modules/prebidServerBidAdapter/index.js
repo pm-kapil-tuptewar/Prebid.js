@@ -983,6 +983,8 @@ Object.assign(ORTB2.prototype, {
     const commonFpd = s2sBidRequest.ortb2Fragments?.global || {};
     mergeDeep(request, commonFpd);
 
+    // update device.language to ISO-639-1-alpha-2 (2 character language)
+    request.device.language = request.device.language && request.device.language.split('-')[0];
     addBidderFirstPartyDataToRequest(request, s2sBidRequest.ortb2Fragments?.bidder || {});
 
     request.imp.forEach((imp) => this.impRequested[imp.id] = imp);
