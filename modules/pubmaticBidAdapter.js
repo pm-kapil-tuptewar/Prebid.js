@@ -1284,6 +1284,10 @@ export const spec = {
       payload.device.sua = device?.sua;
     }
 
+    if (device?.ip) {
+      payload.device.ip = device?.ip;
+    }
+
     if (device?.ext?.cdep) {
       deepSetValue(payload, 'device.ext.cdep', device.ext.cdep);
     }
