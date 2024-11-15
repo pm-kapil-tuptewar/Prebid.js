@@ -83,6 +83,14 @@ export const PBS_PROCESSORS = {
         }
       }
     },
+    extIBV: {
+      // sets bidResponse.ext from ext.ibv
+      fn(bidResponse, bid) {
+        if (deepAccess(bid, 'ext.ibv')) {
+          bidResponse.ext = mergeDeep({}, { ibv: bid.ext.ibv }, bidResponse.ext);
+        }
+      }
+    },
   },
   [RESPONSE]: {
     serverSideStats: {
