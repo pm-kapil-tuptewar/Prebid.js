@@ -367,7 +367,7 @@ const updateUserSiteDevice = (req, bidRequest) => {
     req.site.publisher.id = pubId.trim();
   }
   // if kadpageurl present then update site.page url with kadpageurl
-  if (req.site?.page && kadpageurl) req.site.page = kadpageurl;
+  if (req.site?.page && kadpageurl) req.site.page = kadpageurl.trim();
 }
 
 const updateResponseWithCustomFields = (res, bid, ctx) => {
