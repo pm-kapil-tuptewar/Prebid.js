@@ -282,7 +282,7 @@ const updateVideoImp = (videoImp, videoParams, adUnitCode, imp) => {
   if (!videoParams || (!videoImp.w && !videoImp.h)) {
     delete imp.video;
     logWarn(`${LOG_WARN_PREFIX}Error: Missing ${!videoParams ? 'video config params' : 'video size params (playersize or w&h)'} for adunit: ${adUnitCode} with mediaType set as video. Ignoring video impression in the adunit.`);
-    return;
+	return;
   }
 }
 
@@ -368,6 +368,12 @@ const updateUserSiteDevice = (req, bidRequest) => {
   }
   // if kadpageurl present then update site.page url with kadpageurl
   if (req.site?.page && kadpageurl) req.site.page = kadpageurl.trim();
+  // Check if geo information is present in device or user object
+  if (req.device.geo && !req.user.geo) {
+    req.user.geo = req.device.geo;
+  } else if (req.user.geo && !req.device.geo) {
+    req.device.geo = req.user.geo;
+  }
 }
 
 const updateResponseWithCustomFields = (res, bid, ctx) => {
