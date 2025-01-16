@@ -247,10 +247,10 @@ const updateBannerImp = (bannerObj, adSlot) => {
   	bannerObj.h = parseInt(splits[1]);
   }
 
-  if (bannerObj.w == primarySize.w && bannerObj.h == primarySize.h) {
-    bannerObj.format.shift();
-    if (!bannerObj.format.length) delete bannerObj.format;
-  }
+  bannerObj.format = bannerObj.format.filter(
+	(item) => !(item.w === bannerObj.w && item.h === bannerObj.h)
+  );
+  
   bannerObj.pos = 0;
 }
 
