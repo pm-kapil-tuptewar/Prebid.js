@@ -74,6 +74,12 @@ const converter = ortbConverter({
     if (pmzoneid) imp.ext.pmZoneId = pmzoneid;
     setImpTagId(imp, adSlot.trim(), hashedKey);
     setImpFields(imp);
+	// check for battr data types
+	['banner', 'video', 'native'].forEach(key => {
+		if (imp[key]?.battr && !Array.isArray(imp[key].battr)) {
+		  delete imp[key].battr;
+		}
+	});
     return imp;
   },
   request(buildRequest, imps, bidderRequest, context) {
@@ -250,7 +256,7 @@ const updateBannerImp = (bannerObj, adSlot) => {
   bannerObj.format = bannerObj.format.filter(
 	(item) => !(item.w === bannerObj.w && item.h === bannerObj.h)
   );
-  
+
   bannerObj.pos = 0;
 }
 
