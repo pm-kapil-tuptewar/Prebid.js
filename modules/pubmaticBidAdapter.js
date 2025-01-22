@@ -384,7 +384,7 @@ const updateUserSiteDevice = (req, bidRequest) => {
 
 const updateResponseWithCustomFields = (res, bid, ctx) => {
   const { ortbRequest, seatbid } = ctx;
-  res.referrer = ortbRequest.site.ref || '';
+  res.referrer = ortbRequest.site?.ref || '';
   res.sspID = res.partnerImpId = bid.id || '';
   res.ad = bid.adm;
   res.pm_dspid = bid.ext?.dspid ? bid.ext.dspid : null;
@@ -629,7 +629,7 @@ export const spec = {
   buildRequests: (validBidRequests, bidderRequest) => {
     const { page, ref } = bidderRequest?.refererInfo || {};
     const { publisherId, profId, verId } = bidderRequest?.bids?.[0]?.params || {};
-    pubId = publisherId;
+    pubId = publisherId.trim();
     const wiid = generateUUID();
     let bid;
     blockedIabCategories = [];
@@ -637,7 +637,7 @@ export const spec = {
     conf = {
       pageURL: page || window.location.href,
       refURL: ref || window.document.referrer,
-      pubId: publisherId,
+      pubId: publisherId.trim(),
       kadpageurl: page || window.location.href,
       profId: profId,
       verId: verId
