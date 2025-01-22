@@ -27,6 +27,7 @@ const PUBLICATION = 'pubmatic'; // Your publication on Blue Billywig, potentiall
 const RENDERER_URL = 'https://pubmatic.bbvms.com/r/'.concat('$RENDERER', '.js'); // URL of the renderer application
 const MSG_VIDEO_PLCMT_MISSING = 'Video.plcmt param missing';
 const PREBID_NATIVE_DATA_KEY_VALUES = Object.values(PREBID_NATIVE_DATA_KEYS_TO_ORTB);
+const DEFAULT_TTL = 99;
 const CUSTOM_PARAMS = {
   'kadpageurl': '', // Custom page url
   'gender': '', // User gender
@@ -56,7 +57,7 @@ let pubId = 0;
 const converter = ortbConverter({
   context: {
     netRevenue: true,
-    ttl: 300
+    ttl: DEFAULT_TTL
   },
   imp(buildImp, bidRequest, context) {
     const { kadfloor, currency, adSlot, deals, dctr, pmzoneid, hashedKey } = bidRequest.params;
@@ -390,7 +391,7 @@ const updateResponseWithCustomFields = (res, bid, ctx) => {
   res.pm_dspid = bid.ext?.dspid ? bid.ext.dspid : null;
   res.pm_seat = seatbid.seat;
   if (!res.creativeId) res.creativeId = bid.id;
-  if (!res.ttl) MEDIATYPE_TTL[res.mediaType];
+  if (!res.ttl || res.ttl == DEFAULT_TTL) res.ttl = MEDIATYPE_TTL[res.mediaType];
   if (bid.dealid) {
     res.dealChannel = bid.ext?.deal_channel ? dealChannel[bid.ext.deal_channel] || null : 'PMP';
   }
