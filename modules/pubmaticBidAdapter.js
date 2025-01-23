@@ -75,12 +75,12 @@ const converter = ortbConverter({
     if (pmzoneid) imp.ext.pmZoneId = pmzoneid;
     setImpTagId(imp, adSlot.trim(), hashedKey);
     setImpFields(imp);
-	// check for battr data types
-	['banner', 'video', 'native'].forEach(key => {
-		if (imp[key]?.battr && !Array.isArray(imp[key].battr)) {
+    // check for battr data types
+    ['banner', 'video', 'native'].forEach(key => {
+      if (imp[key]?.battr && !Array.isArray(imp[key].battr)) {
 		  delete imp[key].battr;
-		}
-	});
+      }
+    });
     return imp;
   },
   request(buildRequest, imps, bidderRequest, context) {
@@ -255,7 +255,7 @@ const updateBannerImp = (bannerObj, adSlot) => {
   }
 
   bannerObj.format = bannerObj.format.filter(
-	(item) => !(item.w === bannerObj.w && item.h === bannerObj.h)
+    (item) => !(item.w === bannerObj.w && item.h === bannerObj.h)
   );
 
   bannerObj.pos = 0;
@@ -289,7 +289,6 @@ const updateVideoImp = (videoImp, videoParams, adUnitCode, imp) => {
   if (!videoParams || (!videoImp.w && !videoImp.h)) {
     delete imp.video;
     logWarn(`${LOG_WARN_PREFIX}Error: Missing ${!videoParams ? 'video config params' : 'video size params (playersize or w&h)'} for adunit: ${adUnitCode} with mediaType set as video. Ignoring video impression in the adunit.`);
-	return;
   }
 }
 
@@ -338,7 +337,7 @@ const updateRequestExt = (req, bidderRequest) => {
     ? allowedBiddersList.map(val => val.trim().toLowerCase()).filter(uniques)
     : allBiddersList;
   req.ext.marketplace = {
-    allowedbidders: biddersList.includes('*') ? allBiddersList : ['pubmatic', ...biddersList],
+    allowedbidders: (biddersList.includes('*') || biddersList.includes('all')) ? allBiddersList : [...new Set(['pubmatic', ...biddersList.filter(val => val && val.trim())])]
   }
 }
 
