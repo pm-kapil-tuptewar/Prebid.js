@@ -155,6 +155,7 @@ const handleImageProperties = asset => {
       imgProps.wmin = minWidth;
       imgProps.hmin = minHeight;
     }
+    // eslint-disable-next-line camelcase
     imgProps.ext = { aspectratios: asset.aspect_ratios.filter(({ ratio_width, ratio_height }) => ratio_width && ratio_height).map(({ ratio_width, ratio_height }) => `${ratio_width}:${ratio_height}`) };
   }
   imgProps.w = asset.w || asset.width;
@@ -261,8 +262,7 @@ const updateBannerImp = (bannerObj, adSlot) => {
   bannerObj.format = bannerObj.format.filter(
     (item) => !(item.w === bannerObj.w && item.h === bannerObj.h)
   );
-
-  bannerObj.pos = 0;
+  bannerObj.pos ??= 0;
 }
 
 const setImpTagId = (imp, adSlot, hashedKey) => {
@@ -601,12 +601,10 @@ export const spec = {
       logWarn(LOG_WARN_PREFIX + 'Error: publisherId is mandatory and cannot be numeric (wrap it in quotes in your config). Call to OpenBid will not be sent for ad unit: ' + JSON.stringify(bid));
       return false;
     }
-
     if (FEATURES.VIDEO && mediaTypes.hasOwnProperty(VIDEO)) {
       // bid.mediaTypes.video.mimes OR bid.params.video.mimes should be present and must be a non-empty array
       const mediaTypesVideoMimes = deepAccess(bid, 'mediaTypes.video.mimes');
       const paramsVideoMimes = deepAccess(bid, 'params.video.mimes');
-
       if (!isNonEmptyArray(mediaTypesVideoMimes) && !isNonEmptyArray(paramsVideoMimes)) {
         logWarn(LOG_WARN_PREFIX + 'Error: For video ads, bid.mediaTypes.video.mimes OR bid.params.video.mimes should be present and must be a non-empty array. Call to OpenBid will not be sent for ad unit:' + JSON.stringify(bid));
         return false;
