@@ -140,7 +140,7 @@ const converter = ortbConverter({
   overrides: {
     imp: {
       bidfloor: false,
-	  extBidfloor: false
+extBidfloor: false
     },
     bidResponse: {
       native: false
@@ -212,7 +212,7 @@ const setImpFields = imp => {
   if (imp.ext?.data && Object.keys(imp.ext.data).length === 0) delete imp.ext.data
 }
 
-function setGranularFloor(imp, mediaTypes) {
+function removeGranularFloor(imp, mediaTypes) {
   mediaTypes.forEach(mt => {
     if (imp[mt]?.ext && imp[mt].ext.bidfloor === imp.bidfloor && imp[mt].ext.bidfloorcur === imp.bidfloorcur) {
       delete imp[mt].ext;
@@ -263,7 +263,7 @@ const setFloorInImp = (imp, bid) => {
   imp.bidfloor = (bidFloor > 0) ? bidFloor : UNDEFINED;
   logInfo(LOG_WARN_PREFIX, 'Updated imp.bidfloor:', imp.bidfloor);
   // remove granular floor if impression level floor is same as granular
-  if (isMultiFormatRequest) setGranularFloor(imp, requestedMediatypes);
+  if (isMultiFormatRequest) removeGranularFloor(imp, requestedMediatypes);
 }
 
 const updateBannerImp = (bannerObj, adSlot) => {
