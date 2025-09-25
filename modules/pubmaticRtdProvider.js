@@ -14,7 +14,20 @@ import { REJECTION_REASON } from '../src/constants.js';
  * This RTD module has a dependency on the priceFloors module.
  * We utilize the continueAuction function from the priceFloors module to incorporate price floors data into the current auction.
  */
-import { continueAuction } from './priceFloors.js'; // eslint-disable-line prebid/validate-imports
+import { continueAuction, getFloor } from './priceFloors.js'; // eslint-disable-line prebid/validate-imports
+
+// Register an after hook to modify the floor value and return it so it is used by the caller
+getFloor.after((result, ctx) => {
+  if (result && typeof result.floor === 'number') {
+    result.floor = result.floor * 2;
+    if (ctx && ctx.floorInfo) {
+      ctx.floorInfo.matchingFloor = result.floor;
+    }
+    logInfo(CONSTANTS.LOG_PRE_FIX, '[RTD] Modified floor value (after hook):', result.floor);
+    return result;
+  }
+  return result;
+});
 
 export const CONSTANTS = Object.freeze({
   SUBMODULE_NAME: 'pubmatic',

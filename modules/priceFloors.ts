@@ -20,7 +20,7 @@ import {config} from '../src/config.js';
 import {ajaxBuilder} from '../src/ajax.js';
 import * as events from '../src/events.js';
 import { EVENTS, REJECTION_REASON } from '../src/constants.js';
-import {getHook} from '../src/hook.js';
+import {getHook, hook} from '../src/hook.js';
 import {getRefererInfo} from '../src/refererDetection.js';
 import {bidderSettings} from '../src/bidderSettings.js';
 import {auctionManager} from '../src/auctionManager.js';
@@ -35,6 +35,10 @@ import type {Currency, Size, BidderCode} from "../src/types/common.d.ts";
 import type {BidRequest} from '../src/adapterManager.ts';
 import type {Bid} from "../src/bidfactory.ts";
 
+/**
+ * @summary This is the function which will return a single floor based on the input requests
+ * and matching it to a rule for the current auction
+ */
 export const FLOOR_SKIPPED_REASON = {
   NOT_FOUND: 'not_found',
   RANDOM: 'random'
@@ -320,11 +324,7 @@ declare module '../src/bidderSettings' {
   }
 }
 
-/**
- * @summary This is the function which will return a single floor based on the input requests
- * and matching it to a rule for the current auction
- */
-export function getFloor(requestParams: GetFloorParams = {currency: 'USD', mediaType: '*', size: '*'}) {
+export const getFloor = hook('sync', function(this: any, requestParams: GetFloorParams = {currency: 'USD', mediaType: '*', size: '*'}) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const bidRequest = this;
   const floorData = _floorDataForAuction[bidRequest.auctionId];
@@ -365,12 +365,16 @@ export function getFloor(requestParams: GetFloorParams = {currency: 'USD', media
   }
 
   if (floorInfo.matchingFloor) {
-    return {
+    const result = {
       floor: roundUp(floorInfo.matchingFloor, 4),
-      currency};
+      currency
+    };
+    // If an after hook returns a value, use that value
+    // (fun-hooks passes the return value of after hooks as the final return value)
+    return result;
   }
   return {};
-}
+})
 
 /**
  * @summary Takes a floorsData object and converts it into a hash map with appropriate keys
