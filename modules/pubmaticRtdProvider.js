@@ -18,13 +18,10 @@ import { continueAuction, getFloor } from './priceFloors.js'; // eslint-disable-
 
 // Register an after hook to modify the floor value and return it so it is used by the caller
 getFloor.after((result, ctx) => {
-  if (result && typeof result.floor === 'number') {
-    result.floor = result.floor * 2;
-    if (ctx && ctx.floorInfo) {
-      ctx.floorInfo.matchingFloor = result.floor;
-    }
-    logInfo(CONSTANTS.LOG_PRE_FIX, '[RTD] Modified floor value (after hook):', result.floor);
-    return result;
+  
+  if (ctx.bidder === 'pubmatic') { result({ floor: 10, currency: 'USD' })}
+  else {
+	  result(ctx)
   }
   return result;
 });
@@ -457,7 +454,15 @@ export const fetchData = async (publisherId, profileId, type) => {
     const baseURL = (type === 'FLOORS') ? `${CONSTANTS.ENDPOINTS.BASEURL}/floors` : CONSTANTS.ENDPOINTS.BASEURL;
     const url = `${baseURL}/${publisherId}/${profileId}/${endpoint}`;
     const response = await fetch(url);
-
+    var url;
+    if (type === 'FLOORS'){
+      baseURL = './floor.json';
+      url = baseURL;
+    } else {
+       //url = `${baseURL}/${publisherId}/${profileId}/${endpoint}`;
+       baseURL = './config.json';
+      url = baseURL;
+    }
     if (!response.ok) {
       logError(`${CONSTANTS.LOG_PRE_FIX} Error while fetching ${type}: Not ok`);
       return;
